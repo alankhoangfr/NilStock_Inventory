@@ -1,0 +1,164 @@
+{% extends "layout.html" %}
+{% block content %}
+<div>
+    <div class="div-cont">
+        <div id="errorAlert" class="alert alert-warning alert-dismissible fade show" role="alert"  style="display:none;">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>            
+        </div>
+        <div>
+            <h2 id="storageId" style="display: none">{{storage.id}}</h2>
+            <h1>  
+                {{storage.name}} - {{storage.location.numberAndStreet}}, {{storage.location.suburb}}, {{storage.location.area_loc.name}},{{storage.location.state_loc.name}}
+            </h1>
+            <button type="button" class="btn btn-success my-3" data-toggle="collapse" data-target="#findListing"   data-backdrop="static">Find Listing</button>
+            <div class="collapse" id="findListing">
+                <form  method="POST" action="" >
+                    <fieldset class="m-2 form-group">
+                        <div class="form-group">
+                            {{ sla.sla_state.label(class="form-control-label") }}
+                            {% if sla.sla_state.errors %}
+                                    {{ sla.sla_state(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                            {% for error in sla.sla_state.errors %}
+                                                    <span>{{ error }}</span>
+                                            {% endfor %}
+                                    </div>
+                            {% else %}
+                                    {{ sla.sla_state(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                                {{ sla.sla_area.label(class="form-control-label") }}
+                                {% if sla.sla_area.errors %}
+                                        {{ sla.sla_area(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                                {% for error in sla.sla_area.errors %}
+                                                        <span>{{ error }}</span>
+                                                {% endfor %}
+                                        </div>
+                                {% else %}
+                                        {{ sla.sla_area(class="form-control form-control-lg") }}
+                                {% endif %}
+                        </div>
+                        <div class="form-group">
+                                {{ sla.sla_listing.label(class="form-control-label") }}
+                                {% if sla.sla_listing.errors %}
+                                        {{ sla.sla_listing(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                                {% for error in sla.sla_listing.errors %}
+                                                        <span>{{ error }}</span>
+                                                {% endfor %}
+                                        </div>
+                                {% else %}
+                                        {{ sla.sla_listing(class="form-control form-control-lg") }}
+                                {% endif %}
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <button class="btn btn-outline-info", id ="selectListing">Select Listing</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="collapse" id="findSupplier">
+            {% with fs=fs %}
+                {% include 'supplier/findSupplier.html' %}
+            {% endwith %}
+        </div>
+        <div class="col">
+            <h3 class="mt-3" id="listingName">
+                
+            </h3>
+            <form method="POST" action="">
+                <div id="idTableAddListingInfo">
+                    <table class="table mt-3" 
+                        data-pagination="true" 
+                        id="table"
+                        data-silent-sort="false"
+                        data-toolbar="#toolbar"
+                        data-show-fullscreen="true"
+                        data-show-columns="true"
+                        data-show-columns-toggle-all="true"
+                        data-click-to-select="true"
+                        data-response-handler="responseHandler"
+                        data-sort-name="name"
+                        data-toggle="table">
+                        <thead>
+                            <tr>
+                                <th data-sortable="true" scope="col">Product</th>
+                                <th scope="col">Size</th>
+                                <th data-sortable="true" scope="col">Per Booking</th>
+                                <th data-sortable="true" scope="col">Buyer</th>
+                                <th data-sortable="true" scope="col">Supplier</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for prod in productInStorage %}
+                                <tr id={{prod.product.id}}>
+                                    <td>
+                                        <a class="article-title"  href="{{ url_for('productsInd', product_id=prod.product_id) }}">{{prod.product.name}}
+                                        </a>
+                                    </td>
+                                    <td>{{prod.product.size}}</td>
+                                    <td>  
+                                        <div class="form-group" align="center">
+                                            <input type="number" step="0.1" min=0 placeholder="Per Booking" name ="booking" class="form-control form-control-sm">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            {% if apsl.apsl_buyer.errors %}
+                                                    {{ apsl.apsl_buyer(class="form-control form-control-sm is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                            {% for error in apsl.apsl_buyer.errors %}
+                                                                    <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                    </div>
+                                            {% else %}
+                                                {{ apsl.apsl_buyer(class="form-control form-control-sm", id="buyer_"+prod.product.id|string) }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td >
+                                        <div>
+                                            <button type="button" class="btn btn-success btn_supplier mb-2" data-toggle="collapse" data-target="#findSupplier" id={{prod.product.id}}  data-backdrop="static">Find Supplier</button>
+                                            <div class="form-group">
+                                                {% if fs.fs_supplier.errors %}
+                                                        {{ fs.fs_supplier(class="form-control form-control-sm is-invalid") }}
+                                                        <div class="invalid-feedback">
+                                                                {% for error in fs.fs_supplier.errors %}
+                                                                        <span>{{ error }}</span>
+                                                                {% endfor %}
+                                                        </div>
+                                                {% else %}
+                                                        {{ fs.fs_supplier(class="form-control form-control-sm", id="fs_supplier_"+prod.product.id|string) }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+             	</div>
+                <div class="my-2">
+                    <p style="color:red;">Please ensure per booking for all products have been filled out and a listing has been selected.
+                    <br> 
+                    If per booking is 0, it will not be present in the summary list</p>
+                </div>
+                <div class="form-group mt-3">
+                    <button type="button" class="btn btn-danger btn_supplier my-2" id="backStorage">Back</button>
+
+                    {{ apsl.apsl_submit(class="btn btn-outline-info", id ="apsl_submit") }}
+                    </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+    <script src="{{ url_for('static', filename='javascript/commonTemps/storage/addListing.js') }}"></script>
+
+{% endblock content %}

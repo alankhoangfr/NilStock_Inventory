@@ -1,0 +1,27 @@
+<div id="info_{{pid[0].product.id}}" rel="popover" >
+    <i class="fa fa-info-circle fa-lg" aria-hidden="true" ></i>
+    <script>
+        $(document).ready(function() {
+            let infoStr=""
+            let info = {{pid[2]|tojson}}
+            for (stor in info){
+              infoStr+= "<b>Storage: "+stor+"</b><br />"
+              infoStr+= "Quantity: "+info[stor]+"<br />"
+            }
+            let id="#info_"+{{pid[0]["product_id"]}}
+            $(id).popover({
+                html: true  ,
+                animation: true,
+                content: infoStr,
+                placement: "left",
+                container: 'body',
+                title:"Current Info",
+                trigger:"click"
+
+            });
+        });
+        $(function () {
+          $('[data-toggle="popover"]').popover()
+        })
+    </script>
+</div>

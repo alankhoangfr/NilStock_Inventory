@@ -1,0 +1,45 @@
+ <div class="modal fade " id="removeProduct" tabindex="-1" role="dialog" aria-labelledby="removeProduct" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+     <div class="modal-content">
+       <div class="modal-header">
+         <h5 class="modal-title">Remove Product from Storage</h5>
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+       </div>
+       <div class="modal-body">
+           <form method="GET" action="">  
+            <div class="form-inline my-2 my-lg-0 ">
+              <input class="form-control mr-sm-2" type = "search"  placeholder="Search Storage Cages"  id="searchingProductIdRemove"   >
+              <button class="btn btn-outline-primary my-2 my-sm-0", type="submit" id="searchSubmitProductRemove">Search</button>
+              <button class="btn btn-outline-primary my-2 my-sm-0", type="submit" id="clearSubmitProductRemove">Clear</button>
+            </div>
+            <div class="my-4">
+              <p>
+                If the product is not displayed, please ensure that the <b>quantity</b> set to the product for this storage cage {{storage.name}} is <b>0</b>. 
+              </p>
+            </div>
+          </form>
+         <form  method="POST" action="" class="my-4">
+           <fieldset class="m-2 form-group">
+             <div class="form-group">
+                 <select class="form-control mb-2" id="removeProductSelect" name="removeProduct">
+                    {% for rp in removeProducts %}
+                      <option value={{rp.product.id}}>{{rp.product.name}}</option>
+                    {% endfor %}
+                  </select>
+             </div>
+           </fieldset>
+           <div class="my-4">
+             <button type="submit" class="btn btn-outline-info" id="removeProductButton">
+               Remove Product
+             </button>
+             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+           </div>
+         <div class="form-group">
+
+         </div>
+       </form>
+     </div>
+   </div>
+ </div>

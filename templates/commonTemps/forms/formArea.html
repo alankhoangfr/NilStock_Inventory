@@ -1,0 +1,34 @@
+<form  method="POST" action="" id="formArea">
+  <fieldset class="m-2 form-group">
+    <div class="form-group">
+      {{ formArea.area_name.label(class="form-control-label") }}
+      {% if formArea.area_name.errors %}
+          {{ formArea.area_name(class="form-control form-control-lg is-invalid") }}
+          <div class="invalid-feedback">
+              {% for error in formArea.area_name.errors %}
+                  <span>{{ error }}</span>
+              {% endfor %}
+          </div>
+      {% else %}
+          {{ formArea.area_name(class="form-control form-control-lg") }}
+      {% endif %}
+    </div>  
+    <div class="form-group">
+      {{ formArea.stateArea.label(class="form-control-label") }}
+      {% if formArea.stateArea.errors %}
+          {{ formArea.stateArea(class="form-control form-control-lg is-invalid") }}
+          <div class="invalid-feedback">
+              {% for error in formArea.stateArea.errors %}
+                  <span>{{ error }}</span>
+              {% endfor %}
+          </div>
+      {% else %}
+          {{ formArea.stateArea(class="form-control form-control-lg") }}
+      {% endif %}
+    </div>
+  </fieldset>  
+  <div class="form-group">
+      {{ formArea.submit(class="btn btn-outline-info", id="formAreaSubmit") }}
+  </div>
+</form>
+<script src="{{ url_for('static', filename='javascript/commonTemps/areaLocationModal.js') }}"></script>

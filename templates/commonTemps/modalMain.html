@@ -1,0 +1,92 @@
+ <div class="modal fade" id="addMainModal" tabindex="-1" role="dialog" aria-labelledby="addMainLabel" aria-hidden="true">
+    <div class="modal-dialog  mw-100 w-75" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addMainLabel">Create new {{mainLabel}} </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeMainModal">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row" id="all_buttons">
+            <div class="col-sm-12 ">
+              <div class="btn-group btn-group ">
+                <button id="addMainButton" class="btn btn-danger mx-2 my-4" type="button" data-toggle="collapse" data-target="#addMainId" aria-expanded="false" aria-controls="addMain">Back to Main Form</button>
+               <button id="addAreaButton" class="btn btn-primary mx-2 my-4" type="button" data-toggle="collapse" data-target="#addAreaId" aria-expanded="false" aria-controls="addArea">Create New Area</button>
+              <button id="addLocButton" class="btn btn-primary mx-2 my-4" type="button" data-toggle="collapse" data-target="#addLocationId" aria-expanded="false" aria-controls="addLocation">Create New Location</button>
+              
+             </div>
+            </div>
+          </div>
+          <div class="d-flex flex-column justify-content-center align-items-center container">
+            <div class="row">
+              
+              <div class="collapse multi-collapse" id="addAreaId">
+                <div>
+                  <div id="successAlertArea" class="alert alert-success alert-dismissible fade show" role="alert"  style="display:none;">
+                    Area Added
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div id="errorAlertArea" class="alert alert-warning alert-dismissible fade show" role="alert" style="display:none;">
+                    Choose a new name
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                </div>
+                  {% with formArea=formArea %}
+                    {% include 'commonTemps/forms/formArea.html' %}
+                  {% endwith %}
+              </div>
+            </div>
+            <div class="row">
+              <div class="collapse multi-collapse" id="addLocationId">
+                <div>
+                  <div id="successAlertLocation" class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;">
+                    Location Added
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div id="errorAlertLocation" class="alert alert-warning alert-dismissible fade show" role="alert" style="display:none;">
+                    Error in adding Location. Try Again
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>                    
+                  </div>
+                </div>
+                  {% with formLocation=formLocation %}
+                    {% include 'commonTemps/forms/formLocation.html' %}
+                  {% endwith %}
+              </div>
+            </div>
+            <div class="row">
+              <div class="collapse multi-collapse" id="addMainId">
+                <div>
+                  <div id="successAlertMain" class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;">
+                    {{mainLabel}} Added
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div id="errorAlertMain"class="alert alert-warning alert-dismissible fade show" role="alert" style="display:none;">
+                    Error in adding {{mainLabel}}. Try Again
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>                    
+                  </div>
+                </div>
+                  {% with mainLabel=mainLabel, formMain=formMain %}
+                    {% include 'commonTemps/forms/formsMain.html' %}
+                 {% endwith %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='javascript/commonTemps/collapsableButton.js') }}"></script>

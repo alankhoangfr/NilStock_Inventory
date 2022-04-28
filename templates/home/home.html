@@ -1,0 +1,190 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div>
+    <div class="row">
+      <form method="GET" action="" class="col-md-12" style="max-width: 800px; margin:0 auto;">
+        {{ filterProducts.csrf_token() }}
+        <fieldset class="m-2 form">
+          <div class="form-row" >
+            <div class="form-group col-md-3">
+              {{ filterProducts.state.label(class="form-control-label") }}
+              {% if filterProducts.state.errors %}
+                  {{ filterProducts.state(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in filterProducts.state.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ filterProducts.state(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+            <div class="form-group col-md-3">
+              {{ filterProducts.area.label(class="form-control-label") }}
+              {% if filterProducts.area.errors %}
+                  {{ filterProducts.area(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in filterProducts.area.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ filterProducts.area(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+            <div class="form-group col-md-3">
+              {{ filterProducts.suburb.label(class="form-control-label") }}
+              {% if filterProducts.suburb.errors %}
+                  {{ filterProducts.suburb(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in filterProducts.suburb.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ filterProducts.suburb(class="form-control form-control-lg") }}
+              {% endif %}
+            </div> 
+            <div class="form-group col-md-3">
+              {{ filterProducts.numberOfBooking.label(class="form-control-label") }}
+              {% if filterProducts.numberOfBooking.errors %}
+                  {{ filterProducts.numberOfBooking(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in filterProducts.numberOfBooking.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ filterProducts.numberOfBooking(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-row  ">
+            <div class="form-group col-md-4">
+              {{ filterProducts.storageCage.label(class="form-control-label-lg") }}
+              {% if filterProducts.storageCage.errors %}
+                  {{ filterProducts.storageCage(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in filterProducts.storageCage.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ filterProducts.storageCage(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+            <div class="form-group col-md-4">
+              {{ filterProducts.listing.label(class="form-control-label-lg") }}
+              {% if filterProducts.listing.errors %}
+                  {{ filterProducts.listing(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in filterProducts.listing.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ filterProducts.listing(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+            <div class=" col-md-4">
+              {{ filterProducts.search(class="btn btn-primary pt-4 mt-4 ml-5", style="margin:auto; min-width:100px") }}
+            </div>
+          </div>
+        </fieldset >
+      </form>
+    </div>
+    <div class="row my-3 div-cont">
+      <div >
+        <p>
+          <b>State</b>: {{requestInfo.state}}, <b>Area</b>: {{requestInfo.area}}, <b>Suburb</b>: {{requestInfo.suburb}}, 
+          {% if requestInfo.booking!='' %}
+            <b>Booking</b>: {{requestInfo.booking}}
+          {% endif %}
+          {% if requestInfo.storage!='' %}
+            <b>Storage Cage</b>: {{requestInfo.storage}}
+          {% endif %}
+          {% if requestInfo.listing!='' %}
+            <b>Listing</b>: {{requestInfo.listing}}
+          {% endif %}
+        </p>
+      </div>
+    </div>
+    <div class="mt-3 div-cont">
+
+      <table class="table mt-3" 
+        data-pagination="true" 
+        id="table"
+        data-silent-sort="false"
+        data-toolbar="#toolbar"
+        data-show-fullscreen="true"
+        data-show-columns="true"
+        data-show-columns-toggle-all="true"
+        data-click-to-select="true"
+        data-response-handler="responseHandler"
+        data-toggle="table">
+        <thead>
+          <tr>
+            <th data-sortable="true" scope="col">Storage</th>
+            <th data-sortable="true" scope="col">Product</th>
+            <th scope="col">Size</th>
+            <th data-sortable="true" scope="col">Quantity</th>
+            <th data-sortable="true" scope="col">Listing</th>
+            <th data-sortable="true" scope="col">Number of Booking</th>
+            <th data-sortable="true" scope="col">Per Booking</th>
+            <th data-sortable="true" scope="col">Supplier</th>
+            <th data-sortable="true" scope="col">Buyer</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {% for prod in alloutput %}
+            <tr>
+              <td>
+                <a class="article-title"  href="{{ url_for('storageInd', main_id=prod[0].storage_id) }}">{{prod[0].storage.name}}
+                </a>
+              </td>
+              <td>
+                <a class="article-title"  href="{{ url_for('productsInd', product_id=prod[0].product_id) }}">{{prod[0].product.name}}
+                </a>
+              </td>
+              <td>{{prod[0].product.size}}</td>
+              <td>{{prod[0].quantity}}</td>
+              <td>                           
+                {% for p in prod[1] %}
+                  <a class="article-title"  href="{{ url_for('listingInd', main_id=p.listing_id) }}">
+                    <p>{{p.listing.name}}</p>
+                  </a>
+                {% endfor %}    
+              </td>
+              <td>                           
+                {% for p in prod[1] %}
+                  <p>{{(prod[0].quantity/p.per_booking)|round|int}}</p>
+                {% endfor %}    
+              </td>
+              <td>                           
+                {% for p in prod[1] %}
+                  <p>{{p.per_booking}}</p>
+                {% endfor %}    
+              </td>
+              <td>                           
+                {% for p in prod[1] %}
+                  {% if p.supplier ==None %}
+                    <p>None</p>
+                  {% else %}
+                    <p>{{p.supplier.name}}</p>
+                  {% endif %}
+                {% endfor %}    
+              </td>
+              <td>                           
+                {% for p in prod[1] %}
+                  <p>{{p.orderentity}}</p>
+                {% endfor %}    
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+<script src="{{ url_for('static', filename='javascript/home/home.js') }}"></script>
+{% endblock content %}

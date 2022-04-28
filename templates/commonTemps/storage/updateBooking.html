@@ -1,0 +1,68 @@
+ <div class="modal fade" id="updateBooking" tabindex="-1" role="dialog" aria-labelledby="updateBooking" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Update Booking</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>
+            <b>Note</b>: This is will update this listing for <strong>ALL</strong> storage cages.
+          </p>
+           <form  method="POST" action="" >
+            <fieldset class="m-2 form-group">
+              <div class="form-group">
+                  {{ updateBooking.up_listing.label(class="form-control-label") }}
+                  {% if updateBooking.up_listing.errors %}
+                      {{ updateBooking.up_listing(class="form-control form-control-lg is-invalid") }}
+                      <div class="invalid-feedback">
+                          {% for error in updateBooking.up_listing.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                      {{ updateBooking.up_listing(class="form-control form-control-lg") }}
+                  {% endif %}
+              </div>
+              <div class="form-group">
+                  {{ updateBooking.up_bookings.label(class="form-control-label") }}
+                  {% if updateBooking.up_bookings.errors %}
+                      {{ updateBooking.up_bookings(class="form-control form-control-lg is-invalid") }}
+                      <div class="invalid-feedback">
+                          {% for error in updateBooking.up_bookings.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                      {{ updateBooking.up_bookings(class="form-control form-control-lg") }}
+                  {% endif %}
+              </div>
+              <div class="form-group">
+                  {{ updateBooking.up_comment.label(class="form-control-label") }}
+                  {% if updateBooking.up_comment.errors %}
+                      {{ updateBooking.up_comment(class="form-control form-control-lg is-invalid") }}
+                      <div class="invalid-feedback">
+                          {% for error in updateBooking.up_comment.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                      {{ updateBooking.up_comment(class="form-control form-control-lg") }}
+                  {% endif %}
+              </div>
+            </fieldset>
+            <div class="form-group">
+                {% if role=="Admin" %}
+                  {{ updateBooking.up_submit_admin(class="submitBookingUpdate btn btn-outline-info",id ="submit_admin") }}
+                {% else %}
+                  {{ updateBooking.up_submit_manager(class="submitBookingUpdate btn btn-outline-info",id ="submit_manager") }}
+                {% endif %}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+      <script src="{{ url_for('static', filename='javascript/commonTemps/storage/updateBookingVerify.js') }}"></script>

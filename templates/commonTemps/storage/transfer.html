@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="div-cont">	
+	 <div >
+	    <div class="row">
+	        <h2 id="storageId" style="display: none">{{storage.id}}</h2>	
+	        {% if stor2 is defined %}
+	      	  <h2 id="storageId2" style="display: none">{{stor2.id}}</h2>
+	        {% endif %}
+	        <div class="col-md-12">
+		        {% if site=="Transfer" %}
+		            <h1 class="my-4" style="margin-left: 0px"> Transfer Inventory from: {{storage.name}} - {{storage.location.suburb}} </h1>
+			    {% else %}
+				    <h1 class="my-4"  style="margin-left: 0px">Transfer Verification</h1>
+				    <h2 name="verifyInfo" id={{verifyInfo.id}} class="mb-5"> Submitted by {{user.username}} on {{verifyInfo.date_posted.strftime('%Y-%m-%d at %H:%M')}} </h2>
+			    {% endif %}        	
+	        </div>
+	        {% if common is defined %}
+		      <form method="GET" action="" class="col-md-12" style="max-width: 800px;">
+		        {{ common.csrf_token() }}
+		        <fieldset class="m-2 form">
+			        <div class="form-group col-md-5">
+			          {{ common.storageCage2.label(class="form-control-label") }}
+			          {% if common.storageCage2.errors %}
+			              {{ common.storageCage2(class="form-control form-control-lg is-invalid") }}
+			              <div class="invalid-feedback">
+			                  {% for error in common.storageCage2.errors %}
+			                      <span>{{ error }}</span>
+			                  {% endfor %}
+			              </div>
+			          {% else %}
+			              {{ common.storageCage2(class="form-control form-control-lg") }}
+			          {% endif %}
+			        </div>
+			    </fieldset>
+		        <div class=" col-md-4">
+		          {{ common.submit(class="btn btn-primary") }}
+		        </div>
+		      </form>
+		    {% endif %}
+		  {% if stor2 is defined %}
+			  <div class="my-4 col-md-12" >
+			  	<p style="text-align: center">For products not on the list please add the products to both storage cages <a href="{{ url_for('storageInd', main_id=storage.id) }}">{{storage.name}} - {{storage.location.suburb}}</a> and <a href="{{ url_for('storageInd', main_id=stor2.id) }}">{{stor2.name}} - {{stor2.location.suburb}}</a> </p>
+
+			  </div>
+		  {% endif %}
+		  <div style="margin:auto">
+		      <table class="table mt-3" 
+		          data-pagination="true" 
+		          id="table"
+		          data-silent-sort="false"
+		          data-toolbar="#toolbar"
+		          data-show-fullscreen="true"
+		          data-show-columns="true"
+		          data-show-columns-toggle-all="true"
+		          data-response-handler="responseHandler"
+		          data-toggle="table"
+		          >
+		          <thead>
+		            <tr>
+		              <th data-sortable="true" scope="col">Product</th>
+		              <th scope="col">Size</th>
+		              <th scope="col">Current Quantity Info </th>
+		              <th  scope="col">Quantity to Transfer </th>   
+		              <th data-sortable="true"  scope="col">Future Quantity in {{storage.name}} - {{storage.location.suburb}}</th>
+		              <th data-sortable="true" scope="col">Future Quantity in {{columnName}}</th>
+		                         
+		            </tr>
+		          </thead>
+		          <tbody>
+		          	{% for pid in commonProducts %}
+		          		<tr id="product_{{pid[0].product.id}}">
+			          		<td>
+			          			{{pid[0].product.name}}
+			          		</td>
+			          		<td>
+			          			{{pid[0].product.size}}
+			          		</td>
+			          		<td>
+			                  {%  with %}
+			                    {% include 'formLayout/transferPopover.html' %}
+			                  {% endwith %}
+			                </td>
+			          		<td>
+			          			<input type="number" step="1" min={{pid[1].quantity*-1}} max={{pid[0].quantity}} name ="transfer" value={{pid[3]}} class="form-control form-control-sm" id="{{pid[0].product.id}}_{{pid[0].quantity}}_{{pid[1].quantity}}"> 
+			          		</td>
+			          		<td id="s1_{{pid[0].product.id}}">
+			          			{{pid[0].quantity}}
+			          		</td>
+			          		<td id="s2_{{pid[0].product.id}}">
+			          			{{pid[1].quantity}}
+			          		</td>
+			          		
+			          	</tr>
+		          	{% endfor %}
+		          </tbody>
+		        </table>
+		  </div>
+	    </div>
+	    <div class="mt-4 div-cont">
+	      <label for="comment">Overall Comments</label>
+	      {% if site=="Transfer" %}
+	        <textarea class="form-control"  id="comment" rows="3"></textarea>
+	      {% else %}
+	        <textarea class="form-control"  id="comment" rows="3">{{verifyInfo.comment}}</textarea>
+	      {% endif %}
+	      
+	    </div>
+	    <div class="my-4">
+	    	{% if completed == false %}
+	            <button type="button" class="btn btn-danger btn_supplier my-2" id="backStorage">Back</button>
+	            {% if role=='Admin' %}
+	              {% if site=="Transfer" and commonProducts|length>0 %}
+	                  <button type="button" class="btn btn-primary"  name="buttonTransfer" id="updateTransfer">Update</button>
+	              
+	              {% elif commonProducts|length>0 %}
+	                  <button type="button" class="btn btn-primary"  name="buttonTransfer" id="updateTransferVerify">Update Verification</button>
+	              {% endif %}
+	              {% if site=="verify" %}
+	              	<button type="button" class="btn btn-danger"  id="removeTransfer">Remove Transfer</button>
+	              {% endif %}
+	            {% elif role=="Manager" and site=="Transfer" %}
+	              <button type="button" class="btn btn-primary" name="buttonTransfer"  id="sendStocktake">
+	              	<span id="spinnerSend" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+	          		Send
+	          	</button>
+	            {% endif %}
+	        {% else %}
+	            <button type="button" class="btn btn-danger btn_supplier my-2" id="backStorage">
+	            	Back
+	            </button>
+
+	        {% endif %}
+		    
+	    </div>
+	</div>
+</div>
+
+  <script src="{{ url_for('static', filename='javascript/commonTemps/storage/transfer.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascript/commonTemps/storage/storageCage.js') }}"></script>
+     <script src="{{ url_for('static', filename='javascript/common/commonJS.js') }}"></script>
+{% endblock content %}

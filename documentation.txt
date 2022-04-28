@@ -1,0 +1,16 @@
+Documentation to Deploy
+
+git add .
+git commit -m "Comment..."
+heroku git:remote -a appname
+git push heroku master
+
+For logs: 
+heroku logs --tail
+
+
+
+To run locally
+
+pipenv shell
+python app.py

@@ -1,0 +1,271 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div>
+    <div class="row mb-4 div-cont"> 
+      <div class="form-inline my-2 my-lg-0 col-sm-8 ">
+          <h2 id="storageId" style="display: none">{{storage.id}}</h2>
+          <h1>  
+            {{storage.name}} - {{storage.location.numberAndStreet}}, {{storage.location.suburb}}, {{storage.location.area_loc.name}},{{storage.location.state_loc.name}}
+          </h1>
+       </div>
+      <div class="col-sm-4">
+        {% if possibleRemove is sameas true and role=="Admin" %}
+         <div class="float-sm-right form-inline my-2 my-lg-0 ">
+            <button class="btn btn-danger mx-2" id="removeStorageCage" data-toggle="modal" data-target="#confirmation" data-backdrop="static">  Remove Storage Cage </button>
+        {% elif possibleRemove is sameas false and role=="Admin" %}
+         <div class="form-inline float-sm-right my-2 my-lg-0">
+            <button type="button" class="btn btn-danger mx-2"  data-toggle="popover" data-trigger="focus" title="Info" data-content="Please remove all listings, set quantity to 0 for all products associated with this storage and have no verifications">Remove Storage Cage</button>
+        {% endif %}
+        {% if role=="Admin" %}
+            <button class="btn btn-danger float-right  mx-2" id="editStorageButton" data-toggle="modal" data-target="#editStorage" data-backdrop="static"> Edit Storage Cage </button>
+         </div>
+        {% endif %}
+        </div>
+      </div>
+
+
+     
+    </div>
+    <div class="row">
+      <div class="col-sm-5">
+        <div class="col">
+          <div class="mx-1 my-4 p-4 div-border"> 
+            <h5 class="mt-3">
+              Managers
+            </h5>
+            <table class="table mt-3" 
+              data-pagination="true" 
+              id="table"
+              data-silent-sort="false"
+              data-toolbar="#toolbar"
+              data-show-columns="true"
+              data-show-columns-toggle-all="true"
+              data-click-to-select="true"
+              data-response-handler="responseHandler"
+              data-toggle="table">
+              <thead>
+                <tr>
+                  <th data-sortable="true" scope="col">Name</th>
+                  <th scope="col">Contact</th>
+                  <th scope="col">Email</th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for user in user_storage %}
+                <tr>
+                  <td>{{user.user.username}}</td>
+                  <td>{{user.user.contact}}</td>
+                  <td>{{user.user.email}}</td>
+                </tr>
+
+               {% endfor %}
+              </tbody>
+            </table>
+            <div class="mt-5">
+              {% if role=='Admin' %}
+                {% if user_storage|length>0 %}
+                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeUser" data-backdrop="static">Remove User</button>
+                {% endif %}
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addUser" id="modalAddUser" data-backdrop="static">Add User</button>
+              {% endif %}
+              
+            </div>
+          </div>
+          <div  class="mx-1 my-4 p-4 div-border"> 
+            <h5 class="mt-3">
+              Listings
+            </h5>
+            <table class="table mt-3" 
+              data-pagination="true" 
+              id="table"
+              data-silent-sort="false"
+              data-click-to-select="true"
+              data-response-handler="responseHandler"
+              data-toggle="table">
+              <thead>
+                <tr>
+                  <th data-sortable="true" scope="col">Listing</th>
+                  <th  data-sortable="true" scope="col">Location</th>
+                  <th  data-sortable="true" scope="col">Last Updated</th>
+                </tr>
+              </thead>
+              <tbody>
+                 {% for list in listing %}
+                  <tr>
+                    <td>
+                      <a class="article-title"  href="{{ url_for('listingInd', main_id=list.id) }}">    {{list.name}}
+                      </a>
+                    </td>
+                    <td>{{list.location.numberAndStreet}}, {{list.location.suburb}}, {{list.location.area_loc.name}},{{list.location.state_loc.name}}</td>
+                    <td>{{list.last_update.strftime('%Y-%m-%d at %H:%M')}}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <div class="mt-5">
+              {% if role=='Admin' and listing|length>0 %}
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeListing" data-backdrop="static">Remove Listing</button>
+              {% endif %}
+              <a type="button" class="btn btn-success"  href="{{ url_for('storageAddListing', storage_id=storage.id) }}"  >Add Listing</a>
+              <button type="button" class="btn btn-success" data-toggle="modal" data-target="#updateBooking" data-backdrop="static">Update Bookings</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-7">
+        <div class="col"> 
+          <div class="mx-1 my-4 p-4 div-border"> 
+            <h5 class="mt-3">Verification</h5>
+            <table class="table mt-3" 
+              data-pagination="true" 
+              id="table"
+              data-silent-sort="false"
+              data-click-to-select="true"
+              data-response-handler="responseHandler"
+              data-toggle="table">
+              <thead>
+                <tr>
+                  <th data-sortable="true" scope="col">User</th>
+                  <th data-sortable="true" scope="col">Type</th>
+                  <th data-sortable="true" scope="col">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                 {% for v_info in notificationVerify %}
+                    <td>
+                        <a class="article-title"  href="{{url_for(v_info['url'], verify_id=v_info['verify_id'])}}">    {{v_info['username']}}
+                        </a>
+                    </td>
+                    <td>
+                      <a class="article-title"   href="{{url_for(v_info['url'], verify_id=v_info['verify_id'])}}">{{v_info['title']}}
+                      </a>
+                    </td>
+                    <td>
+                      <a class="article-title"   href="{{url_for(v_info['url'], verify_id=v_info['verify_id'])}}"> {{v_info['date']}}
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="mx-1 my-4 p-4 div-border"> 
+            <div class="mt-5">
+              <a type="button" class="btn btn-primary"  href="{{ url_for('stocktake', storage_id=storage.id) }}"  >Stocktake</a>
+              <a type="button" class="btn btn-primary"  href="{{ url_for('transfer', storage_id=storage.id) }}"  >Transfer</a>
+              <a type="button" class="btn btn-primary"  href="{{ url_for('shopping', storage_id=storage.id) }}"  >Shopping</a>
+              <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addProduct" data-backdrop="static">Add Product</button>
+              {% if possibleProductRemove is sameas true %}
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeProduct" data-backdrop="static">Remove Product</button>     
+              {% elif productInStorage|length ==0 %}
+
+              {% else %}
+                <button type="button" class="btn btn-danger"  data-toggle="popover" data-trigger="focus" title="Info" data-content="Please have no Verifications">Remove Product</button>
+              {% endif %}
+              
+            </div>
+            <h5 class="mt-5">
+              Products
+            </h5>
+            <table class="table mt-3" 
+              data-pagination="true" 
+              id="table"
+              data-silent-sort="false"
+              data-toolbar="#toolbar"
+              data-show-fullscreen="true"
+              data-show-columns="true"
+              data-show-columns-toggle-all="true"
+              data-click-to-select="true"
+              data-response-handler="responseHandler"
+              data-toggle="table">
+              <thead>
+                <tr>
+                  <th data-sortable="true" scope="col">Product</th>
+                  <th scope="col">Size</th>
+                  <th data-sortable="true" scope="col">Quantity</th>
+                  <th scope="col">Listing</th>
+                  <th   scope="col">Number of Booking</th>
+                  <th scope="col">Per Booking</th>
+                  <th scope="col">Supplier</th>
+                  <th  scope="col">Buyer</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                {% for prod in productInStorage %}
+                  <tr>
+                    <td>
+                      <a class="article-title"  href="{{ url_for('productsInd', product_id=prod[0].product_id) }}">{{prod[0].product.name}}
+                      </a>
+                    </td>
+                    <td>{{prod[0].product.size}}</td>
+                    <td>{{prod[0].quantity}}</td>
+                    <td>                           
+                      {% for p in prod[1] %}
+                        <a class="article-title"  href="{{ url_for('listingInd', main_id=p.listing_id) }}">
+                          <p>{{p.listing.name}}</p>
+                        </a>
+                      {% endfor %}    
+                    </td>
+                    <td>                           
+                      {% for p in prod[1] %}
+                        <p>{{(prod[0].quantity/p.per_booking)|round|int}}</p>
+                      {% endfor %}    
+                    </td>
+                    <td>                           
+                      {% for p in prod[1] %}
+                        <p>{{p.per_booking}}</p>
+                      {% endfor %}    
+                    </td>
+                    <td>                           
+                      {% for p in prod[1] %}
+                        {% if p.supplier ==None %}
+                          <p>None</p>
+                        {% else %}
+                          <p>{{p.supplier.name}}</p>
+                        {% endif %}
+                      {% endfor %}    
+                    </td>
+                    <td>                           
+                      {% for p in prod[1] %}
+                        <p>{{p.orderentity}}</p>
+                      {% endfor %}    
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {%  with title="Remove Storage Cage", text="Are you sure you want to remove the storage cage. All information on suppliers, per booking and quantities of all products and listings associated with the storage cage will be removed." %}
+    {% include 'formLayout/confirmation.html' %}
+  {% endwith %}
+  {%  with  %}
+    {% include 'commonTemps/storage/removeListing.html' %}
+  {% endwith %}
+  {%  with  %}
+    {% include 'commonTemps/storage/editStorage.html' %}
+  {% endwith %}
+  {%  with   %}
+    {% include 'commonTemps/storage/updateBooking.html' %}
+  {% endwith %}
+  {%  with %}
+    {% include 'commonTemps/storage/addUser.html' %}
+  {% endwith %}
+  {%  with  %}
+    {% include 'commonTemps/storage/removeUser.html' %}
+  {% endwith %}
+ {% with  %}
+    {% include 'commonTemps/storage/addProductToStorage.html' %}
+ {% endwith %}
+  {% with formSearch=formSearch, removeProducts=removeProducts%}
+    {% include 'commonTemps/storage/removeProduct.html' %}
+ {% endwith %}
+  <script src="{{ url_for('static', filename='javascript/commonTemps/storage/storageCage.js') }}"></script>
+   <script src="{{ url_for('static', filename='javascript/common/commonJS.js') }}"></script>
+{% endblock content %}

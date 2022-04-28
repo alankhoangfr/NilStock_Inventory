@@ -1,0 +1,31 @@
+ <div class="modal fade" id="addManageStorage" tabindex="-1" role="dialog" aria-labelledby="addMange" aria-hidden="true">
+ 	<div class="modal-dialog" role="document">
+	 	<div class="modal-content">
+		    <div class="modal-header">
+		      <h5 class="modal-title" >Assigning Managers </h5>
+		      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		        <span aria-hidden="true">&times;</span>	
+		      </button>
+		    </div>
+		    <div class="modal-body">
+		     	<div class="row p-3">
+		     		<form>
+		     			<input class="form-control mr-sm-2" type = "search" placeholder="Search Storage Cages"  id="searchingStorage" >
+						<h4 class="my-4">Storage Cages</h4>
+						 <select class="form-control mb-2" id="possibleStorage">
+	                      {% for sc in storageCages %}
+	                          <option value={{sc.id}} >{{sc.name}} - {{sc.location.suburb}}</option>
+	                      {% endfor %}
+	                    </select>
+	                    <button class="btn btn-primary mt-4"  id="addResponsibility">
+	                    	Add Responsibility
+	                    </button>
+
+		     		</form>
+
+		     	</div>	
+
+		    </div>
+	  </div>
+	</div>
+</div>

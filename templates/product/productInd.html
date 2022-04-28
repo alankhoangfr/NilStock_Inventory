@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div>
+    <article class="media content-section">
+     <img class="rounded-circle account-img" src="{{ url_for('static', filename='pictures/product/'+product.image_file) }}">
+      <div class="media-body">
+        <div class="article-content">
+          <a class="mr-2">{{ product.name }}</a>
+          <a class="mr-2">{{ product.size }}</a>
+          <a class="mr-2" href="{{ url_for('category') }}">{{ product.subcategory.category.name }}</a>
+          <a class="mr-2" href="{{ url_for('subcategory') }}">{{ product.subcategory.name }}</a>
+        </div>
+        <h5>Comment</h5>
+        <p class="article-content">{{ product.comment }}</p>
+      </div>
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.csrf_token() }}
+            <fieldset class="form-group">   
+              <div class="form-group">
+                  {{ form.picture.label() }}
+                  {{ form.picture(class="form-control-file") }}
+                  {% if form.picture.errors %}
+                      {% for error in form.picture.errors %}
+                          <span class="text-danger">{{ error }}</span></br>
+                      {% endfor %}
+                  {% endif %}
+              </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </article>
+    <table class="table mt-3" 
+            data-pagination="true" 
+            id="table"
+            data-sort-name="name"
+            data-silent-sort="false"
+            data-toolbar="#toolbar"
+            data-show-fullscreen="true"
+            data-show-columns="true"
+            data-show-columns-toggle-all="true"
+            data-show-export="true"
+            data-click-to-select="true"
+            data-response-handler="responseHandler"
+            data-toggle="table">
+      <thead>
+        <tr>
+          <th scope="col">Storages</th>
+          <th scope="col">Location</th>
+          <th scope="col">Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+         {% for storageListing in storages %}
+          <tr>
+            <td>
+              <a class="article-title"  href="{{ url_for('storageInd', main_id=storageListing.storage.id) }}">{{storageListing.storage.name}}</a>
+            </td>
+            <td>{{storageListing.storage.location.numberAndStreet}}, {{storageListing.storage.location.suburb}}, {{storageListing.storage.location.area_loc.name}},{{storageListing.storage.location.state_loc.name}}</td>
+            <td>{{storageListing.quantity}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <table class="table mt-3" 
+            data-pagination="true" 
+            id="table"
+            data-sort-name="name"
+            data-silent-sort="false"
+            data-toolbar="#toolbar"
+            data-show-fullscreen="true"
+            data-show-columns="true"
+            data-show-columns-toggle-all="true"
+            data-show-export="true"
+            data-click-to-select="true"
+            data-response-handler="responseHandler"
+            data-toggle="table">
+      <thead>
+        <tr>
+          <th scope="col">Listing</th>
+          <th scope="col">Location</th>
+          <th scope="col">Per Booking</th>
+        </tr>
+      </thead>
+      <tbody>
+         {% for storageListing in listings %}
+          <tr>
+            <td>
+              <a class="article-title"  href="{{ url_for('listingInd', main_id=storageListing.listing.id) }}">    {{storageListing.listing.name}}
+              </a>
+            </td>
+            <td>{{storageListing.listing.location.numberAndStreet}}, {{storageListing.listing.location.suburb}}, {{storageListing.listing.location.area_loc.name}},{{storageListing.listing.location.state_loc.name}}</td>
+            <td>
+              {{storageListing.per_booking}}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+
+{% endblock content %}

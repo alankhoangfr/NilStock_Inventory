@@ -1,0 +1,32 @@
+<div id="info_{{prod[0].product.id}}" rel="popover" >
+    <i class="fa fa-info-circle fa-lg" aria-hidden="true" ></i>
+    <script>
+        $(document).ready(function() {
+
+            let quantity={{prod[2]["Quantity"]}}
+            let allListings={{prod[2]["Listings"]|tojson}}
+            let infoStr = "Quantity: "+quantity+"<br />"
+            for (lis in allListings){
+              infoStr+= "<b>Listing: "+lis+"</b><br />"
+              infoStr+= "Per Booking: "+allListings[lis]["Per_Booking"]+"<br />"
+              infoStr+= "Supplier: "+allListings[lis]["Supplier"]+"<br />"
+              infoStr+= "Buyer: "+allListings[lis]["Buyer"]+"<br />"
+            }
+            let id="#info_"+{{prod[0]["product_id"]}}
+            $(id).popover({
+                html: true  ,
+                animation: true,
+                content: infoStr,
+                placement: "right",
+                container: 'body',
+                title:"Current Info",
+                trigger:"click"
+
+            });
+        });
+        $(function () {
+          $('[data-toggle="popover"]').popover()
+        })
+
+    </script>
+</div>

@@ -1,0 +1,293 @@
+
+{% extends "layout.html" %}
+{% block content %}
+<div class="div-cont">
+  <div>
+    <div id="errorAlert" class="alert alert-warning alert-dismissible fade show" role="alert"  style="display:none;">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>        
+   </div>
+    <div>
+      <h2 id="storageId" style="display: none">{{storage.id}}</h2>
+      <h1>  
+        {{storage.name}} - {{storage.location.numberAndStreet}}, {{storage.location.suburb}}, {{storage.location.area_loc.name}},{{storage.location.state_loc.name}}
+      </h1>
+    
+      {% if site=="stocktake" %}
+        <h3 class="my-4"> Stocktake  </h3>
+      {% elif site =="shopping" %}
+        <h3 class="my-4"> Shopping  </h3>
+      {% elif site=="verifyStocktake" %}
+        <h3 class="my-4">Stocktake Verification</h3>
+        <h4 name="verifyInfo" id={{verifyInfo.id}} class="mb-5"> Submitted by {{user.username}} on {{verifyInfo.date_posted.strftime('%Y-%m-%d at %H:%M')}} </h4>
+      {% else %}
+        <h3 class="my-4">Shooping Verification</h3>
+        <h4 name="verifyInfo" id={{verifyInfo.id}} class="mb-5"> Submitted by {{user.username}} on {{verifyInfo.date_posted.strftime('%Y-%m-%d at %H:%M')}} </h4>
+      {% endif %}
+
+      <div class="row mb-5">
+      {% with %}
+        {% include 'formLayout/searchBar.html' %}
+      {% endwith %}
+      <div class="my-sm-0 col-sm-3">
+        {% if site=="shopping" or site=="verifyShopping"  %}
+          <div class="form-group my-4">
+            <label style="width: 90%">Enter number of bookings you wish to purchase supplies for</label>
+            <input type="number" step=1 min=0 class="form-control" placeholder="Number of Bookings" aria-label="Bookings" aria-describedby="basic-addon2" id="inputNBoookings">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" id="autoFill" type="button">Auto Fill Quantity</button>
+            </div>
+          </div>
+        {% endif %}
+        {% if site=="verifyShopping"  %}
+          <div class="form-group">
+             <label style="width: 90%">Update all Products to delivery status</label>
+             <select class="form-control " name="status_selected" id="autoFill_status_selected">
+              {% for status in shoppingStatus %}
+                  <option value={{status}} >{{status}}</option>
+              {% endfor %}
+            </select>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" id="autoFillStatus" type="button">Auto Fill Status</button>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      </div>
+      {% if site=="stocktake" or site=="verifyStocktake" %}
+        <div class="collapse" id="findSupplier">
+          {% with fs=fs %}
+            {% include 'supplier/findSupplier.html' %}
+          {% endwith %}
+        </div>
+      {% endif %}
+      <div class="col">
+        <table class="table mt-3" 
+          data-pagination="true" 
+          id="table"
+          data-silent-sort="false"
+          data-toolbar="#toolbar"
+          data-show-fullscreen="true"
+          data-show-columns="true"
+          data-show-columns-toggle-all="true"
+          data-response-handler="responseHandler"
+          data-toggle="table">
+          <thead>
+            {% if site=="stocktake" or site=="verifyStocktake" %}
+              <tr>
+                <th scope="col">Current Info </th>
+                <th data-sortable="true" scope="col">Product</th>
+                <th scope="col">Size</th>
+                <th data-sortable="true" scope="col">Quantity</th>
+                <th scope="col">Listing</th>
+                <th  data-sortable="true"  scope="col">Number of Booking</th>
+                <th data-sortable="true" scope="col">Per Booking</th>
+                <th  scope="col">Supplier</th>
+                <th  scope="col">Buyer</th> 
+              </tr>
+            {% elif site=="shopping" or site=="verifyShopping"  %}
+              <tr>
+                <th data-sortable="true" scope="col">Product</th>
+                <th scope="col">Size</th>
+                <th data-sortable="true" scope="col">Current Quantity</th>
+                <th scope="col">Listing</th>
+                <th  data-sortable="true"  scope="col">Number of Booking</th>
+                <th data-sortable="true" scope="col">Per Booking</th>
+                <th scope="col">Supplier</th>
+                <th scope="col">Buyer</th> 
+                <th data-sortable="true" scope="col">Buy Quantity</th>
+                {% if site=="verifyShopping" %}
+                  <th data-sortable="true" scope="col">Status</th>
+                {% endif %}
+              </tr>
+            {% endif %}
+          </thead>
+          <tbody>
+            {% for prod in productInStorage %}
+              <tr id="product_{{prod[0].product.id}}" >
+                {% if site=="stocktake" or site=="verifyStocktake" %}
+                  <td>
+                    {%  with  %}
+                      {% include 'formLayout/stockTakePopover.html' %}
+                    {% endwith %}
+                  </td>
+                {% endif %}
+                <td>
+                  <a class="article-title"  href="{{ url_for('productsInd', product_id=prod[0].product_id) }}">{{prod[0].product.name}}
+                  </a>
+                  
+                </td>
+                <td>{{prod[0].product.size}}</td>
+                <td >
+                  {% if site=="stocktake" or site=="verifyStocktake" %}
+                    <input type="number" step="1" min=0 name ="quantity" class="form-control form-control-sm" value ={{prod[0].quantity}} id="quantity_product_{{prod[0].product.id}}">
+                  {% elif site=="shopping" or site=="verifyShopping" %}
+                    <p>{{prod[0].quantity}} </p>
+                  {% endif %}
+                     
+                </td>
+                <td name="allListings">                           
+                  {% for p in prod[1] %}
+                    <div  >
+                      <a class="article-title"  href="{{ url_for('listingInd', main_id=p.listing_id) }}">
+                        <p>{{p.listing.name}}</p>
+                      </a>
+                    </div>
+                    
+                  {% endfor %}    
+                </td>
+                <td>                           
+                    {% for p in prod[1] %}
+                      {% if p.per_booking==0 %}
+                        <p>0</p>
+                      {% else %}
+                        <p>{{(prod[0].quantity/p.per_booking)|round|int}}</p>
+                      {% endif %}
+                    {% endfor %}    
+                  </td>
+                <td >                           
+                  {% for p in prod[1] %}
+                    {% if site=="stocktake" or site=="verifyStocktake" %}
+                    <input type="number" step="0.1" min=0 name ="per_booking" class="form-control form-control-sm mb-3" value ={{p.per_booking}} id="booking_product_{{prod[0].product.id}}_listing_{{p.listing.id }}">
+                    {% elif site=="shopping" or site=="verifyShopping" %}
+                      <p class="per_booking" id="booking_product_{{prod[0].product.id}}_listing_{{p.listing.id }}">{{p.per_booking}} </p>
+                    {% endif %}
+                    
+                  {% endfor %}    
+                </td>
+                <td > 
+                  {% for p in prod[1] %}
+                    {% if site=="stocktake" or site=="verifyStocktake" %}
+                      <div class="form-inline">
+                        <button type="button" class="btn btn-success btn_supplier mb-2 mr-3" data-toggle="collapse" data-target="#findSupplier" id="#fs_supplier_{{prod[0].product.id}}_{{p.listing.id}}"  data-backdrop="static">Find Supplier</button>
+                        <select class="form-control mb-2" name="supplier_select" id="fs_supplier_{{prod[0].product.id}}_{{p.listing.id}}">
+                          {% for as in areaSuppliers %}
+                            {% if as[0] == p.supplier.id %}
+                              <option value={{as[0]}}  selected>{{as[1]}}</option>
+                            {% else %}
+                              <option value={{as[0]}} >{{as[1]}}</option>
+                            {% endif %}
+                          {% endfor %}
+                        </select>
+                      </div>
+                    {% elif site=="shopping" or site=="verifyShopping" %}
+                      {% for as in areaSuppliers %}
+                        <p>{{as[1]}} </p>
+                      {% endfor %}
+                    {% endif %}
+                  {% endfor %}    
+                </td>
+                <td >                           
+                  {% for p in prod[1] %}
+                    {% if site=="stocktake" or site=="verifyStocktake" %}
+                      <select class="form-control mb-2" id="exampleFormControlSelect1" name="buyer">
+                        {% for b in buyers %}
+                          {% if b == p.orderentity %}
+                            <option selected>{{b}}</option>
+                          {% else %}
+                            <option>{{b}}</option>
+                          {% endif %}
+                        {% endfor %}
+                      </select>
+                    {% elif site=="shopping" or site=="verifyShopping" %}
+                      <p>{{p.orderentity}} </p>
+                    {% endif %}
+                  {% endfor %}    
+                </td>
+                {% if site=="shopping" %}
+                  <td>
+                    <input type="number" step="1" min=0 name ="shoppingQuantity" class="form-control form-control-sm" value=0 id="shopping_product_{{prod[0].product.id}}">
+                  </td>
+                {% elif site=="verifyShopping" %}
+                  <td>
+                    {% if (prod[2].status=="Verified")  %}
+                      <input disabled type="number" step="1" min=0 name ="shoppingQuantity" class="form-control form-control-sm" value={{prod[2].quantity}} id="shopping_product_{{prod[0].product.id}}">
+                    {% else %}
+                      <input  type="number" step="1" min=0 name ="shoppingQuantity" class="form-control form-control-sm" value={{prod[2].quantity}} id="shopping_product_{{prod[0].product.id}}">
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if prod[2].status=="Verified"  %}
+                      <select class="form-control mb-2" name="status_selected">
+                        <option value="Verified" selected> Verified </option>
+                      </select>
+                    {% elif (prod[2].status=="Delivered") and role=='Manager' %}
+                      <select class="form-control mb-2" name="status_selected">
+                        <option value="Delivered" selected> Delivered </option>
+
+                      </select>
+                    {% else %}
+                      <select class="form-control mb-2" name="status_selected">
+                        {% for status in shoppingStatus %}
+                          {% if status == prod[2].status %}
+                            <option value={{status}}  selected>{{status}}</option>
+                          {% else %}
+                            <option value={{status}} >{{status}}</option>
+                          {% endif %}
+                        {% endfor %}
+                      </select>
+                    {% endif %}
+                  </td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="mt-4">
+          <label for="comment">Overall Comments</label>
+          {% if site=="stocktake" %}
+            <textarea class="form-control"  id="comment" rows="3"></textarea>
+        
+          {% else %}
+            <textarea class="form-control"  id="comment" rows="3">{{verifyInfo.comment}}</textarea>
+          {% endif %}
+          
+        </div>
+        
+        <div class="mt-5">
+          {% if completed == false %}
+            <button type="button" class="btn btn-danger btn_supplier my-2" id="backStorage">Back</button>
+            {% if role=='Admin' %}
+              {% if site=="stocktake" %}
+                  <button type="button" class="btn btn-primary"  name="buttonStocktake" id="updateStocktake">Update</button>
+              {% elif  site=="verifyStocktake" %}
+                  <button type="button" class="btn btn-danger"  id="removeStocktake">Remove Stocktake</button>
+                  <button type="button" class="btn btn-primary"  name="buttonStocktake" id="updateStocktakeVerify">Update Verification</button>
+              {% elif site=="shopping" %}
+                  <button type="button" class="btn btn-primary"  name="buttonStocktake" id="sendShopping">Update</button>
+              {% elif site=="verifyShopping" %}
+                  <button type="button" class="btn btn-danger"  id="removeShopping">Remove Order</button>
+                  <button type="button" class="btn btn-primary"  name="buttonStocktake" id="updateShoppingVerify">Update Verification</button>
+                  
+              {% endif %}
+              
+            {% elif role=="Manager" %}
+              {% if site=="stocktake" %}
+                <button type="button" class="btn btn-primary" name="buttonStocktake"  id="sendStocktake">
+                <span id="spinnerSend" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                  Send
+                </button>
+              {% elif site=="shopping" %}
+                <button type="button" class="btn btn-primary" name="buttonStocktake"  id="sendShopping">
+                  Send
+              </button>
+              {% elif site=="verifyShopping" and validUser == true %}
+                <button type="button" class="btn btn-primary"  name="buttonStocktake" id="updateShoppingVerify">Update Verification</button>
+              {% endif %}
+            {% endif %}
+          {% else %}
+            <button type="button" class="btn btn-danger btn_supplier my-2" id="backStorage">Back</button>
+          }
+          {% endif %}
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>     
+
+  <script src="{{ url_for('static', filename='javascript/commonTemps/storage/stocktakeAndShopping.js') }}"></script>
+  <script src="{{ url_for('static', filename='javascript/commonTemps/storage/storageCage.js') }}"></script>
+   <script src="{{ url_for('static', filename='javascript/common/commonJS.js') }}"></script>
+{% endblock content %}

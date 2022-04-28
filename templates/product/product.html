@@ -1,0 +1,181 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div>
+    <div class="row div-cont">
+      <div class="mb-5 col-sm-2 my-2 my-lg-0">
+        <h1 style="margin-left: 0px">
+          Products
+        </h1>
+      </div>
+      <div class="mb-5 col-sm-10 offset my-2 my-lg-0 " align="right">
+        <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#addProduct" aria-expanded="false" aria-controls="addProduct">Create New Product</button>
+      </div>
+    </div>
+    <div class="row div-cont my-5">
+      {% with %}
+        {% include 'formLayout/searchBar.html' %}
+      {% endwith %}
+    </div>
+      
+    <div class="row collapse multi-collapse" id="addProduct">
+      <form  method="POST" action="" enctype="multipart/form-data">
+          {{ addProduct.csrf_token() }}
+          
+          <fieldset class="m-2 form-group">
+            <div class="form-group">
+              {{ addProduct.ap_name.label(class="form-control-label") }}
+              {% if addProduct.ap_name.errors %}
+                  {{ addProduct.ap_name(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in addProduct.ap_name.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ addProduct.ap_name(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+            <div class="form-group">
+              {{ addProduct.ap_size.label(class="form-control-label") }}
+              {% if addProduct.ap_size.errors %}
+                  {{ addProduct.ap_size(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in addProduct.ap_size.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ addProduct.ap_size(class="form-control form-control-lg") }}
+              {% endif %}
+
+              {{ addProduct.ap_size_name.label(class="form-control-label") }}
+              {% if addProduct.ap_size_name.errors %}
+                  {{ addProduct.ap_size_name(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in addProduct.ap_size_name.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ addProduct.ap_size_name(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+            <div class="form-group">
+              {{ addProduct.ap_category.label(class="form-control-label") }}
+              {% if addProduct.ap_category.errors %}
+                  {{ addProduct.ap_category(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in addProduct.ap_category.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ addProduct.ap_category(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+            <div class="form-group">
+              {{ addProduct.ap_subcategory.label(class="form-control-label") }}
+              {% if addProduct.ap_subcategory.errors %}
+                  {{ addProduct.ap_subcategory(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in addProduct.ap_subcategory.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ addProduct.ap_subcategory(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+            <div class="form-group">
+              {{ addProduct.ap_picture.label() }}
+              {{ addProduct.ap_picture(class="form-control-file") }}
+              {% if addProduct.ap_picture.errors %}
+                  {% for error in form.ap_picture.errors %}
+                      <span class="text-danger">{{ error }}</span></br>
+                  {% endfor %}
+              {% endif %}
+            </div>
+            <div class="form-group">
+              {{ addProduct.ap_comment.label(class="form-control-label") }}
+              {% if addProduct.ap_comment.errors %}
+                  {{ addProduct.ap_comment(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in addProduct.ap_comment.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ addProduct.ap_comment(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+          </fieldset>  
+          <div class="form-group">
+              {{ addProduct.ap_submit(class="btn btn-outline-info", id="addProductSubmit") }}
+          </div>
+        </form>
+      </div>
+    <div class="row div-cont">
+      <div class="col-sm-12">
+
+        <table class="table mt-3" 
+            data-pagination="true" 
+            id="table"
+            data-silent-sort="false"
+            data-toolbar="#toolbar"
+            data-show-fullscreen="true"
+            data-show-columns="true"
+            data-show-columns-toggle-all="true"
+            data-show-export="true"
+            data-click-to-select="true"
+            data-page-size="25"
+            data-response-handler="responseHandler"
+            data-toggle="table">
+          <thead>
+            <tr>
+              <th data-sortable="true" scope="col">Id</th>
+              <th scope="col">Photo</th>
+              <th data-sortable="true" scope="col">Product</th>
+              <th scope="col">Size</th>
+              <th data-sortable="true" scope="col">Category</th>
+              <th data-sortable="true" scope="col">SubCategory</th>
+              <th scope="col">Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for prod in products %}
+              <tr>
+                <td>
+                  <a class="article-title"  href="{{ url_for('productsInd', product_id=prod.id) }}">{{prod.id}}</a>
+                </td>
+                <td>
+                  <img class="rounded-circle account-img" src="{{ url_for('static', filename='pictures/product/'+prod.image_file) }}" onerror="this.onerror=null;this.src='{{ url_for('static', filename='pictures/product/default.jpg') }}';">
+                </td>
+                <td>
+                  <a class="article-title"  href="{{ url_for('productsInd', product_id=prod.id) }}">{{prod.name}}</a>
+                </td>
+                <td>
+                  {{prod.size}}
+                </td> 
+                <td>
+                  <a class="article-title"  href="{{ url_for('category') }}">{{prod.subcategory.category.name}}</a>
+                </td>
+                <td>
+                  <a class="article-title"  href="{{ url_for('subcategory') }}">{{prod.subcategory.name}}</a>
+                </td>
+                <td>
+                  {{prod.comment}}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+ 
+
+
+<script src="{{ url_for('static', filename='javascript/product/product.js') }}"></script>
+
+
+{% endblock content %}

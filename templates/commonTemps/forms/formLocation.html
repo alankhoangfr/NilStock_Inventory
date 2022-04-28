@@ -1,0 +1,74 @@
+<form  method="POST" action="">
+  <fieldset class="m-2 form-group">
+    <div class="form-group">
+      {{ formLocation.addressLoc.label(class="form-control-label") }}
+      {% if formLocation.addressLoc.errors %}
+          {{ formLocation.addressLoc(class="form-control form-control-lg is-invalid") }}
+          <div class="invalid-feedback">
+              {% for error in formLocation.addressLoc.errors %}
+                  <span>{{ error }}</span>
+              {% endfor %}
+          </div>
+      {% else %}
+          {{ formLocation.addressLoc(class="form-control form-control-lg") }}
+      {% endif %}
+    </div>
+    <div class="form-group">
+        {{ formLocation.suburbLoc.label(class="form-control-label") }}
+        {% if formLocation.suburbLoc.errors %}
+            {{ formLocation.suburbLoc(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+                {% for error in formLocation.suburbLoc.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ formLocation.suburbLoc(class="form-control form-control-lg") }}
+        {% endif %}
+    </div>
+    <div class="form-group">
+        {{ formLocation.postcode.label(class="form-control-label") }}
+        {% if formLocation.postcode.errors %}
+            {{ formLocation.postcode(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+                {% for error in formLocation.postcode.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ formLocation.postcode(class="form-control form-control-lg") }}
+        {% endif %}
+    </div>
+    <div class="form-group">
+        {{ formLocation.stateLoc.label(class="form-control-label") }}
+        {% if formLocation.stateLoc.errors %}
+            {{ formLocation.stateLoc(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+                {% for error in formLocation.stateLoc.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ formLocation.stateLoc(class="form-control form-control-lg") }}
+        {% endif %}
+    </div>
+    <p  style="color: red">If the Area has not been created. Please Create a New Area</p>
+    <div class="form-group">
+        {{ formLocation.area.label(class="form-control-label") }}
+        {% if formLocation.area.errors %}
+            {{ formLocation.area(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+                {% for error in formLocation.area.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ formLocation.area(class="form-control form-control-lg") }}
+        {% endif %}
+    </div>
+  </fieldset>  
+  <div class="form-group">
+      {{ formLocation.submit(class="btn btn-outline-info" ,id="formLocationSubmit") }}
+  </div>
+</form>
+<script src="{{ url_for('static', filename='javascript/commonTemps/locationModal.js') }}"></script>

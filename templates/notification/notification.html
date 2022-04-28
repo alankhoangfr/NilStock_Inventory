@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block content %}
+<div>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="col"> 
+          <h5 class="mt-3">Verification</h5>
+          <table class="table mt-4" 
+            data-pagination="true" 
+            id="table"
+            data-silent-sort="false"
+            data-click-to-select="true"
+            data-response-handler="responseHandler"
+            >
+            <thead>
+              <tr>
+                <th data-sortable="true" scope="col">Storage/Listing</th>
+                <th data-sortable="true" scope="col">User</th>
+                <th data-sortable="true" scope="col">Type</th>
+                <th data-sortable="true" scope="col">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+               {% for v_info in notificationVerify %}
+                <tr>
+                  <td>
+                      {% if v_info['title']=="Update Booking" %}
+                        <a class="article-title"  href="{{url_for('listingInd', main_id=v_info['id'])}}">    {{v_info["name"]}}
+                        </a>
+                      {% else %}
+                      <a class="article-title"  href="{{url_for('storageInd', main_id=v_info['id'])}}">    {{v_info["name"]}}
+                      </a>
+                      {% endif %}
+                  </td>
+                  <td>
+                      <a class="article-title"  href="{{url_for(v_info['url'], verify_id=v_info['verify_id'])}}">    {{v_info['username']}}
+                      </a>
+                  </td>
+                  <td>
+                    <a class="article-title"   href="{{url_for(v_info['url'], verify_id=v_info['verify_id'])}}">{{v_info['title']}}
+                    </a>
+                  </td>
+                  <td>
+                    <a class="article-title"   href="{{url_for(v_info['url'], verify_id=v_info['verify_id'])}}"> {{v_info['date']}}
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="col">
+          <div style="width:100%" class="my-4">
+            <button  type="button"  class="btn btn-success"  data-toggle="modal" data-target="#createPost"  >Add Posts</button>
+          </div>
+          <div  style="width:100%">
+            {% for post in posts.items %}
+                <article class="media content-section">
+                  <img class="rounded-circle article-img" src="{{url_for('static', filename='pictures/profile/' + post.author.image_file)}}" onerror="this.onerror=null;this.src='{{ url_for('static', filename='pictures/profile/default.jpg') }}';">
+                  <div class="media-body">
+                    <div class="article-metadata">
+                      <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                      <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d at %H:%M') }}</small>
+                    </div>
+                    <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+                    <p class="article-content">{{ post.content }}</p>
+                  </div>
+                </article>
+            {% endfor %}
+            {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+              {% if page_num %}
+                {% if posts.page == page_num %}
+                  <a class="btn btn-info mb-4" href="{{ url_for('notification', page=page_num) }}">{{ page_num }}</a>
+                {% else %}
+                  <a class="btn btn-outline-info mb-4" href="{{ url_for('notification', page=page_num) }}">{{ page_num }}</a>
+                {% endif %}
+              {% else %}
+                ...
+              {% endif %}
+            {% endfor %}
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% with %}
+    {% include 'notification/create_post.html' %}
+ {% endwith %}
+ <script src="{{ url_for('static', filename='javascript/notification/notification.js') }}"></script>
+{% endblock content %}

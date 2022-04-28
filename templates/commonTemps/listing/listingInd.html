@@ -1,0 +1,185 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div>
+    <div class="row mb-4"> 
+      <div class="form-inline my-2 my-lg-0 col-sm-8">
+        <h2 id="listing" style="display: none">{{listing.id}}</h2>
+        <h1>
+          {{listing.name}} - {{listing.location.numberAndStreet}}, {{listing.location.suburb}}, {{listing.location.area_loc.name}},{{listing.location.state_loc.name}}
+        </h1>
+      </div>
+       <div class="col-sm-4">
+        {% if possibleRemove is sameas true and role=="Admin" %}
+         <div class="float-sm-right form-inline my-2 my-lg-0 ">
+            <button class="btn btn-danger" id="removeListingButton" data-toggle="modal" data-target="#confirmation" data-backdrop="static"> Remove Listing </button>
+        {% elif possibleRemove is sameas false and role=="Admin" %}
+         <div class="form-inline float-sm-right my-2 my-lg-0">
+            <button type="button" class="btn btn-danger mx-2"  data-toggle="popover" data-trigger="focus" title="Info" data-content="Please remove all listing from storages, set quantity to 0 for all products associated with this storage and have no verifications">Remove Listing</button>
+        {% endif %}
+        {% if role=="Admin" %}
+            <button class="btn btn-danger float-right mx-2" id="editListingButton" data-toggle="modal" data-target="#editListing" data-backdrop="static"> Edit Area </button>
+         </div>
+        {% endif %}
+        </div>
+      </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <p style="margin-left: 40px"><b>Last Update:</b> {{listing.last_update.strftime('%Y-%m-%d at %H:%M')}}</p>
+      </div>
+      <div class="col-sm-4">
+        <div class="col">
+          <h5 class="mt-3">
+            Listings
+          </h5>
+          <table class="table mt-3" 
+            data-pagination="true" 
+            id="table"
+            data-silent-sort="false"
+            data-toolbar="#toolbar"
+            data-show-columns="true"
+            data-show-columns-toggle-all="true"
+            data-click-to-select="true"
+            data-response-handler="responseHandler"
+            data-toggle="table">
+            <thead>
+              <tr>
+                <th scope="col">Listing</th>
+                <th scope="col">Location</th>
+              </tr>
+            </thead>
+            <tbody>
+               {% for storage in storages %}
+                <tr>
+                  <td>
+                    <a class="article-title"  href="{{ url_for('storageInd', main_id=storage.id) }}">    {{storage.name}}
+                    </a>
+                  </td>
+                  <td>{{storage.location.numberAndStreet}}, {{storage.location.suburb}}, {{storage.location.area_loc.name}},{{storage.location.state_loc.name}}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <h5 class="mt-5">Verification</h5>
+          <table class="table mt-3" 
+            data-pagination="true" 
+            id="table"
+            data-silent-sort="false"
+            data-click-to-select="true"
+            data-response-handler="responseHandler"
+            data-toggle="table">
+            <thead>
+              <tr>
+                <th data-sortable="true" scope="col">User</th>
+                <th data-sortable="true" scope="col">Type</th>
+                <th data-sortable="true" scope="col">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+               {% for v_info in notificationVerify %}
+                  <td>
+                      <a class="article-title"  href="{{url_for(v_info['url'], verify_id=v_info['verify_id'])}}">    {{v_info['username']}}
+                      </a>
+                  </td>
+                  <td>
+                    <a class="article-title"   href="{{url_for(v_info['url'], verify_id=v_info['verify_id'])}}">{{v_info['title']}}
+                    </a>
+                  </td>
+                  <td>
+                    <a class="article-title"   href="{{url_for(v_info['url'], verify_id=v_info['verify_id'])}}"> {{v_info['date']}}
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-sm-7 offset-sm-1">
+        <div class="col">
+          
+          <h5 class="mt-3">
+            Products
+          </h5>
+          <table class="table mt-3" 
+            data-pagination="true" 
+            id="table"
+            data-silent-sort="false"
+            data-toolbar="#toolbar"
+            data-show-fullscreen="true"
+            data-show-columns="true"
+            data-show-columns-toggle-all="true"
+            data-click-to-select="true"
+            data-response-handler="responseHandler"
+            data-toggle="table">
+            <thead>
+              <tr>
+                <th data-sortable="true" scope="col">Product</th>
+                <th scope="col">Size</th>
+                <th data-sortable="true" scope="col">Storage Cage</th>
+                <th data-sortable="true" scope="col">Quantity Avaliable</th>
+                <th data-sortable="true" scope="col">Buyer</th>
+                <th data-sortable="true" scope="col">Supplier</th>
+                <th data-sortable="true" scope="col">Listing</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for prod in productInStorage %}
+                <tr>
+                  <td>
+                    <a class="article-title"  href="{{ url_for('productsInd', product_id=prod[0][0].product_id) }}">{{prod[0][0].product.name}}
+                    </a>
+                  </td>
+                  <td>{{prod[0][0].product.size}}</td>
+                  
+                  <td>                           
+                    {% for p in prod[1] %}
+                      <a class="article-title"  href="{{ url_for('listingInd', main_id=p.listing_id) }}">
+                        <p>{{p.storage.name}}</p>
+                      </a>
+                    {% endfor %}    
+                  </td>
+                  <td>
+                    {% for p in prod[0] %}
+                      <p>{{p.quantity}}</p>
+                    {% endfor %}
+                  </td>
+                  <td>                           
+                    {% for p in prod[1] %}
+                      <p>{{p.per_booking}}</p>
+                    {% endfor %}    
+                  </td>
+                  <td>                           
+                    {% for p in prod[1] %}
+                      {% if p.supplier ==None %}
+                        <p>None</p>
+                      {% else %}
+                        <p>{{p.supplier.name}}</p>
+                      {% endif %}
+                    {% endfor %}    
+                  </td>
+                  <td>                           
+                    {% for p in prod[1] %}
+                      <p>{{p.orderentity}}</p>
+                    {% endfor %}    
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {%  with title="Remove Listing", text="Are you sure you want to remove the Listing. All information on suppliers, per booking and quantities of all products on this listings will be removed." %}
+      {% include 'formLayout/confirmation.html' %}
+  {% endwith %}
+    {%  with  %}
+    {% include 'commonTemps/listing/editListing.html' %}
+  {% endwith %}
+  
+    <script src="{{ url_for('static', filename='javascript/commonTemps/listing/listingInd.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascript/common/commonJS.js') }}"></script>
+
+{% endblock content %}

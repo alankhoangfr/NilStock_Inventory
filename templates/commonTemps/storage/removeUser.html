@@ -1,0 +1,28 @@
+ <div class="modal fade" id="removeUser" tabindex="-1" role="dialog" aria-labelledby="removeUser" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Remove Managers</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+           <form  method="POST" action="" >
+            <label for="userRemovePossible" class="my-4">Users</label>
+             <select class="form-control mb-2" id="userRemovePossible">
+              {% for user in user_storage %}
+                  <option value={{user.user.id}} >{{user.user.username}}</option>
+              {% endfor %}
+            </select>
+            <div class="mt-4"> 
+              <button class="btn btn-primary"  id="removeUserSubmit">
+                Remove Responsibility
+              </button>
+              <button type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

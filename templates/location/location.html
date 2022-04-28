@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div>
+    <div class="row div-cont">
+      <div class="mb-5 col-sm-2 my-2 my-lg-0">
+        <h1>
+          Location
+        </h1>
+      </div>
+      <div class="mb-5 col-sm-10 offset my-2 my-lg-0 " align="right">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addLocation" data-backdrop="static" aria-controls="addLocation">Create New Location</button>
+      </div>
+    </div>
+    <div class="row my-5 div-cont">
+      {% with formSearch=formSearch %}
+        {% include 'formLayout/searchBar.html' %}
+      {% endwith %}
+    </div>
+      
+    <div class="row div-cont">
+      <div class="col-sm-12">
+        <table class="table mt-3" 
+            data-pagination="true" 
+            id="table"
+            data-silent-sort="false"
+            data-toolbar="#toolbar"
+            data-show-fullscreen="true"
+            data-show-columns="true"
+            data-show-columns-toggle-all="true"
+            data-show-export="true"
+            data-click-to-select="true"
+            data-response-handler="responseHandler"
+            data-page-size="25"
+            data-toggle="table">
+
+          <thead>
+            <tr>
+              <th scope="col">Action</th>
+              <th data-sortable="true" scope="col">Address</th>
+              <th data-sortable="true" scope="col">Suburb</th>
+              <th data-sortable="true" scope="col">Postcode</th>
+              <th data-sortable="true" scope="col">Area</th>
+              <th data-sortable="true" scope="col">State</th>
+              <th data-sortable="true" scope="col">Status</th>
+              <th data-sortable="true" scope="col">Storage Cage Count</th>
+              <th data-sortable="true" scope="col">Listing Count</th>
+              <th data-sortable="true" scope="col">Supplier Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for loc in allLocationInfo %}
+              <tr>
+                <td>
+                  <div class="btn btn-danger" id={{loc[0].id}} name="removeLocation" data-toggle="modal" data-backdrop="static">
+                    <i class="far fa-trash-alt"></i>
+                  </div>
+                </td>
+                <td>
+                  {{loc[0].numberAndStreet}}
+                </td>
+                <td>
+                  {{loc[0].suburb}}
+                </td>
+                <td>
+                  {{loc[0].postcode}}
+                </td> 
+                <td>
+                 {{loc[0].area_loc.name}}
+                </td>
+                <td>
+                 {{loc[0].state_loc.name}}
+                </td>
+                <td>
+                 {{loc[1]["status"]}}
+                </td>
+                <td>
+                 {{loc[1]["storageCage"]}}
+                </td>
+                <td>
+                 {{loc[1]["listing"]}}
+                </td>
+                <td>
+                 {{loc[1]["suppliers"]}}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+  {% with formLocation=formLocation %}
+    {% include 'location/locationModal.html' %}
+  {% endwith %}
+
+  {%  with title="", text="" %}
+      {% include 'formLayout/confirmation.html' %}
+  {% endwith %}
+
+
+<script src="{{ url_for('static', filename='javascript/location/location.js') }}"></script>
+{% endblock content %}

@@ -1,0 +1,38 @@
+<div class="modal fade" id="addArea" tabindex="-1" role="dialog" aria-labelledby="addArea" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addMainLabel">Create New Area </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="areaModalClose">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="row" style="display: block; width: 90%; margin:auto;">	
+                <div style="margin: auto">
+                  <div id="successAlertArea" class="alert alert-success alert-dismissible fade show" role="alert"  style="display:none;">
+                    Area newly Created!!
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div id="errorAlertArea" class="alert alert-warning alert-dismissible fade show" role="alert" style="display:none;">
+                    Choose a new name
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  {% with formArea=formArea %}
+                    {% include 'commonTemps/forms/formArea.html' %}
+                  {% endwith %}
+                	
+                </div>
+
+            </div>
+        </div>
+      </div>
+    </div>
+ </div>
+<script src="{{ url_for('static', filename='javascript/location/areaInd.js') }}"></script>

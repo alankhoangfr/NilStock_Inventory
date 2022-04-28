@@ -1,0 +1,24 @@
+
+<form class="form-inline my-2 my-lg-0 col-sm-9" method="GET">
+	<input class="form-control mr-sm-2" type = "search" placeholder="Search" name="searchValue" >
+	<button class="btn btn-outline-primary my-2 my-sm-0", name="searchSubmit">Search</button>
+	<button class="btn btn-outline-primary my-2 my-sm-0", name="clearSubmit">Clear</button>
+</form>
+
+
+<script >
+	
+	function searchEmpty (){
+		if($('input[name="searchValue"]').val()==''){
+			$('button[name="searchSubmit"]').prop('disabled', true);
+		}else{
+			$('button[name="searchSubmit"]').prop('disabled', false);
+		}
+	}
+	searchEmpty()
+
+	$(document).on("change",$('input[name="searchValue"]'),function(elem){
+		searchEmpty($('input[name="searchValue"]').val())
+	})
+
+</script>

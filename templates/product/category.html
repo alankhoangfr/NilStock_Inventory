@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div>
+    <div class="row div-cont">
+      <div class="mb-5 col-sm-6 my-2 my-lg-0">
+        <h1 style="margin-left:0px">
+          Category
+        </h1>
+      </div>
+      <div class="mb-5 col-sm-6 my-5 my-lg-0 " align="right">
+        {% with %}
+          {% include 'formLayout/searchBar.html' %}
+        {% endwith %}
+      </div>
+    </div>
+
+    {% for cate in category %}
+      <div class="row div-cont">
+        <h5 class="mt-3" >
+          {{cate.name}}
+        </h5>
+        <div class="table-responsive">
+          <table class="table mt-3" 
+              data-pagination="true" 
+              id="table"
+              data-silent-sort="false"
+              data-toolbar="#toolbar"
+              data-show-fullscreen="true"
+              data-show-columns="true"
+              data-show-columns-toggle-all="true"
+              data-show-export="true"
+              data-click-to-select="true"
+              data-response-handler="responseHandler"
+              data-toggle="table">
+            <thead>
+              <tr>
+                <th data-sortable="true" scope="col">Id</th>
+                <th scope="col">Photo</th>
+                <th data-sortable="true" scope="col">Product</th>
+                <th scope="col">Size</th>
+                <th data-sortable="true" scope="col">Category</th>
+                <th data-sortable="true" scope="col">SubCategory</th>
+                <th scope="col">Comments</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for prod in cate.products %}
+                <tr>
+                  <td>
+                    <a class="article-title"  href="{{ url_for('productsInd', product_id=prod.id) }}">{{prod.id}}</a>
+                  </td>
+                  <td>
+                    <img class="rounded-circle account-img" src="{{ url_for('static', filename='pictures/product/'+prod.image_file) }}" onerror="this.onerror=null;this.src='{{ url_for('static', filename='pictures/product/default.jpg') }}';">
+                  </td>
+                  <td>
+                    <a class="article-title"  href="{{ url_for('productsInd', product_id=prod.id) }}">{{prod.name}}</a>
+                  </td>
+                  <td>
+                    {{prod.size}}
+                  </td> 
+                  <td>
+                    {{prod.subcategory.category.name}}
+                  </td>
+                  <td>
+                    <a class="article-title"  href="{{ url_for('subcategory') }}">{{prod.subcategory.name}}</a>
+                  </td>
+                  <td>
+                    {{prod.comment}}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+{% endblock content %}

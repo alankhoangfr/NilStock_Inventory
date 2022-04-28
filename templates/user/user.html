@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div>
+    <div class="row div-cont">
+      <div class="mb-5 col-sm-4 my-2 my-lg-0">
+        <h1 style="margin-left:0">Users</h1>
+      </div>
+      <div class="mb-5 col-sm-8 offset my-2 my-lg-0 " align="right">
+        <a type="button" class="btn btn-primary mr-5"  href="{{ url_for('register') }}"  >Create New Users</a>
+      </div>
+    </div>
+    <div class="row my-5 div-cont">
+      {% with formSearch=formSearch %}
+        {% include 'formLayout/searchBar.html' %}
+      {% endwith %}
+    </div>
+      
+    <div class="row collapse multi-collapse" id="addProduct">
+      
+      </div>
+    <div class="row ">
+      <div class="div-cont mx-5">
+        <table class="table mt-3" 
+            data-pagination="true" 
+            id="table"
+            data-silent-sort="false"
+            data-toolbar="#toolbar"
+            data-show-fullscreen="true"
+            data-show-columns="true"
+            data-show-columns-toggle-all="true"
+            data-show-export="true"
+            data-click-to-select="true"
+            data-response-handler="responseHandler"
+            data-toggle="table">
+          <thead>
+            <tr>
+              <th>Add Responsibility</th>
+              <th data-sortable="true">Role</th>
+              <th data-sortable="true" scope="col">Name</th>
+              <th scope="col">Contact</th>
+              <th scope="col">Email</th>
+              <th scope="col">Storage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+              <tr>
+                <td>
+                  {% if user[0].role=="Manager" %}
+                    <div class="btn btn-success" id={{user[0].id}} name="addManager" data-toggle="modal" data-target="#addManageStorage" data-backdrop="static">
+                      <i class="fa fa-plus" aria-hidden="true"     ></i>
+                    </div>
+                    <div class="btn btn-danger" id={{user[0].id}} name="removeManager" data-toggle="modal" data-target="#removeManager" data-backdrop="static">
+                      <i class="fa fa-minus" aria-hidden="true"></i>
+                    </div>
+                  {% endif %}
+                </td>
+                <td>
+                  {{user[0].role}}
+                </td>
+                <td>
+                  {{user[0].username}}
+                </td>
+                <td>
+                  {{user[0].contact}}
+                </td> 
+                <td>
+                 {{user[0].email}}
+                </td>
+                <td>
+                  {% for stor in user[1] %}
+                    <a class="article-title"  href="{{ url_for('storageInd', main_id=stor.storage_id) }}">
+                      <p>{{stor.storage.name}} - {{stor.storage.location.suburb}}</p>
+                    </a>        
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+{% with %}
+  {% include 'user/addManager.html' %}
+{% endwith %}
+{% with %}
+  {% include 'user/removeManager.html' %}
+{% endwith %}
+
+  <script src="{{ url_for('static', filename='javascript/user/user.js') }}"></script>
+{% endblock content %}

@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div class="row div-cont" >
+      <h1 style="margin-left: 0; padding-left: 15px" >
+        {{mainLabel}}
+      </h1>
+    </div>
+    <div class="row my-5 div-cont">
+      {% with %}
+        {% include 'formLayout/searchBar.html' %}
+      {% endwith %}
+      <div class="my-2 my-lg-0 col-sm-3 ">
+        <button class="btn btn-primary float-right" type="button" data-toggle="modal" data-target="#addMainModal" data-backdrop="static">Create New {{mainLabel}} </button>
+      </div>
+    </div>
+  <div class="row">
+    {% for element in mainArray.items %}
+        <article class="media content-section col-sm-3">
+          <div class="media-body">
+            <h3><a class="article-title"  href="{{ url_for(mainInd, main_id=element.id) }}">{{ element.name }}</a></h3>
+            <h5><a class="article-title">{{ element.location.numberAndStreet+", "+element.location.suburb }}</a></h5>
+            <h5><a class="article-title" >{{ element.location.area_loc.name }}</a></h5>
+
+          </div>
+        </article>
+        <div class="offset-1"></div>
+    {% endfor %}
+  </div>
+  {% with mainLabel=mainLabel, formMain=formMain, formLocation=formLocation, formArea=formArea %}
+    {% include 'commonTemps/modalMain.html' %}
+  {% endwith %}
+ 
+    {% for page_num in mainArray.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+      {% if page_num %}
+        {% if mainArray.page == page_num %}
+          <a class="btn btn-info mb-4" href="{{ url_for(funName, page=page_num) }}">{{ page_num }}</a>
+        {% else %}
+          <a class="btn btn-outline-info mb-4" href="{{ url_for(funName, page=page_num) }}">{{ page_num }}</a>
+        {% endif %}
+      {% else %}
+        ...
+      {% endif %}
+    {% endfor %}
+  
+
+{% endblock content %}
